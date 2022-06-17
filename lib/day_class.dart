@@ -1,3 +1,4 @@
+// day class for easier CRUD options
 class Day {
   final int day;
   final int locId;

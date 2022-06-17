@@ -7,9 +7,11 @@ import 'dart:math';
 
 import 'base_card.dart';
 
+// use statefulwidget because I need setState()
 class DayPage extends StatefulWidget {
   DayPage({required this.carryOverDayNum});
 
+  // day number that got carried from previous page
   final int carryOverDayNum;
   @override
   State<DayPage> createState() => _DayPageState();
@@ -20,15 +22,18 @@ class _DayPageState extends State<DayPage> {
   late List<int> allLocIds = [];
   late int latestId = 2;
 
+  // refresh information and latest index
   Future refreshDays(int dayNum) async {
     allLocs = await SQLDB.instance.allSpecificDay(dayNum);
     allLocIds = await SQLDB.instance.getAllLocIds(dayNum);
     latestId = (allLocIds.isEmpty ? latestId : allLocIds.reduce(max) + 1);
   }
 
+  // create basecard from day
   Widget getBaseCardFromData(Day day, Key? key) {
     return BaseCard(
         key: key,
+        // push into location page
         cardOnTapFunc: () async {
           await Navigator.push(context,
               MaterialPageRoute(builder: (context) => LocPage(carryOver: day)));
@@ -39,6 +44,7 @@ class _DayPageState extends State<DayPage> {
         cardColor: day.completed == 1 ? dayDark : dayBright,
         cardChild: Row(
           children: [
+            // check if visited
             Expanded(
                 flex: 2,
                 child: BaseCard(
@@ -56,7 +62,7 @@ class _DayPageState extends State<DayPage> {
                     });
                   },
                   cardColor: planHeadColor,
-                  cardChild: SizedBox(
+                  cardChild: const SizedBox(
                       height: 80,
                       width: 10,
                       child: Icon(
@@ -64,10 +70,12 @@ class _DayPageState extends State<DayPage> {
                         size: 40,
                       )),
                 )),
+            // location information
             Expanded(
               flex: 7,
               child: Column(
                 children: [
+                  // location name
                   Row(
                     children: [
                       Expanded(
@@ -80,6 +88,7 @@ class _DayPageState extends State<DayPage> {
                       )
                     ],
                   ),
+                  // arrive & exit time
                   Row(
                     children: [
                       Expanded(
@@ -105,11 +114,12 @@ class _DayPageState extends State<DayPage> {
                 ],
               ),
             ),
+            // Fake button to let user know that they can reorder the location
             Expanded(
                 flex: 2,
                 child: BaseCard(
                   cardColor: dayDark,
-                  cardChild: SizedBox(
+                  cardChild: const SizedBox(
                       height: 80,
                       width: 10,
                       child: Icon(
@@ -121,6 +131,7 @@ class _DayPageState extends State<DayPage> {
         ));
   }
 
+  // turn all location into basecard widget
   late List<Widget> widgetList = allLocs
       .map((day) => getBaseCardFromData(day, Key(day.locId.toString())))
       .toList();
@@ -128,7 +139,6 @@ class _DayPageState extends State<DayPage> {
   @override
   Widget build(BuildContext context) {
     refreshDays(widget.carryOverDayNum);
-
     int carryOverDayNum = widget.carryOverDayNum;
     return Scaffold(
       backgroundColor: dayBg,
@@ -136,10 +146,12 @@ class _DayPageState extends State<DayPage> {
         backgroundColor: dayHeadColor,
         title: Text(
           "Day $carryOverDayNum",
-          style: TextStyle(fontWeight: FontWeight.bold, color: dayTextColor),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: dayTextColor),
         ),
       ),
       body: Center(
+        // generate list of widget
         child: FutureBuilder<List<Day>>(
             future: SQLDB.instance.allSpecificDay(carryOverDayNum),
             builder: (BuildContext context, AsyncSnapshot<List<Day>> snapshot) {
@@ -153,11 +165,13 @@ class _DayPageState extends State<DayPage> {
                         style: TextStyle(fontSize: 30, color: dayDark),
                       ),
                     )
+                  // reorderable list view
                   : ReorderableListView(
                       children: List.generate(snapshot.data!.length, (index) {
                         return getBaseCardFromData(snapshot.data![index],
                             Key(snapshot.data![index].locId.toString()));
                       }).toList(),
+                      // swap data from one location to another when user swaps the card
                       onReorder: (int oldIndex, int newIndex) {
                         if (newIndex > allLocs.length) {
                           newIndex = allLocs.length;
@@ -187,6 +201,7 @@ class _DayPageState extends State<DayPage> {
                           SQLDB.instance.updateDay(updatedOldItem);
                           SQLDB.instance.updateDay(updatedNewItem);
 
+                          // update basecard ordering
                           allLocs.removeAt(oldIndex);
                           allLocs.insert(newIndex, oldItem);
                           allLocs.insert(oldIndex, updatedNewItem);
@@ -194,11 +209,12 @@ class _DayPageState extends State<DayPage> {
                       });
             }),
       ),
+      // add new location
       floatingActionButton: Stack(
         children: [
           Align(
             alignment: Alignment.bottomRight,
-            child: Container(
+            child: SizedBox(
               height: 70,
               width: 70,
               child: FloatingActionButton(

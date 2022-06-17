@@ -7,13 +7,16 @@ import 'package:trip_planner/sql_db.dart';
 class LocPage extends StatelessWidget {
   LocPage({required this.carryOver});
 
+  // Day got carried over from previous page
   final Day carryOver;
   int latestId = 1;
 
+  // receive user's input
   var nameController = TextEditingController();
   var startController = TextEditingController();
   var finishController = TextEditingController();
 
+  // build a basecard
   Widget getBaseCardFromData(Day day) {
     return BaseCard(
         cardColor: locCardColor,
@@ -43,7 +46,7 @@ class LocPage extends StatelessWidget {
                           controller: nameController,
                           decoration: InputDecoration(
                               hintText: carryOver.locName,
-                              hintStyle: TextStyle(
+                              hintStyle: const TextStyle(
                                   color: locTextColor,
                                   fontWeight: FontWeight.bold)),
                         ),
@@ -77,7 +80,7 @@ class LocPage extends StatelessWidget {
                             decoration: InputDecoration(
                                 // labelText: "Start Time",
                                 hintText: carryOver.arriveTime.toString(),
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     color: locTextColor,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -105,7 +108,7 @@ class LocPage extends StatelessWidget {
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                                 hintText: carryOver.exitTime.toString(),
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                     color: locTextColor,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -122,6 +125,7 @@ class LocPage extends StatelessWidget {
       backgroundColor: locBg,
       appBar: AppBar(
         actions: [
+          // delete location button
           Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
@@ -130,16 +134,17 @@ class LocPage extends StatelessWidget {
                 child: IconButton(
                   onPressed: () async {
                     SQLDB.instance.deleteLoc(carryOver.locId);
+                    // go back to previous page after deleting
                     Navigator.pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete_forever,
                     size: 25,
                   ),
                 ),
               )),
         ],
-        title: Text(
+        title: const Text(
           "Edit Information",
           style: TextStyle(fontWeight: FontWeight.bold, color: locTextColor),
         ),
@@ -150,16 +155,17 @@ class LocPage extends StatelessWidget {
           getBaseCardFromData(carryOver),
         ],
       ),
+      // save after editing information
       floatingActionButton: Stack(
         children: [
           Align(
             alignment: Alignment.bottomRight,
-            child: Container(
+            child: SizedBox(
               height: 70,
               width: 70,
               child: FloatingActionButton(
                 backgroundColor: planCardColor,
-                child: Icon(Icons.save, size: 40),
+                child: const Icon(Icons.save, size: 40),
                 onPressed: () async {
                   Day updated = Day(
                       day: carryOver.day,
@@ -175,7 +181,7 @@ class LocPage extends StatelessWidget {
                           ? carryOver.exitTime
                           : int.parse(finishController.text));
                   SQLDB.instance.updateDay(updated);
-                  print(updated.toString());
+                  // go back to previous page after editing
                   Navigator.pop(context);
                 },
               ),

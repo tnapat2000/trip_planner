@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-
+//Aj's basecard with added key for reordering
 class BaseCard extends StatelessWidget {
   BaseCard({required this.cardColor, required this.cardChild, this.cardOnTapFunc, this.key});
 

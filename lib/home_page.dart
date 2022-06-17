@@ -8,6 +8,8 @@ import 'constant.dart';
 
 import 'base_card.dart';
 
+//main page where each day for a plan is shown
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -16,18 +18,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // int latestDay = 1;
   late List<Day> allDays = [];
   late List<int> allDayNum = [];
   late int latestDay = 1;
 
+
+  // refresh the database so the output will be updated everytime
   Future refreshDays() async {
     allDays = await SQLDB.instance.allDays();
     allDayNum = (await SQLDB.instance.getAllDayNum()).toSet().toList();
-    // print(allDayNum.toSet().toList());
     latestDay = allDayNum.reduce(max) + 1;
   }
 
+  // change information (day number) into a basecard widget
   Widget getBaseCardFromData(int dayNum) {
     return Column(
       children: [
@@ -58,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             cardOnTapFunc: () {
+              // forward to day page
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -78,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
               padding: const EdgeInsets.all(8.0),
+              // for delete button, delete the entire plan
               child: CircleAvatar(
                 radius: 40,
                 backgroundColor: Colors.redAccent,
@@ -89,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       latestDay = 1;
                     });
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete_forever,
                     size: 25,
                   ),
@@ -97,11 +102,13 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
         ],
         backgroundColor: planDark,
-        title: Text(
+        title: const Text(
           "TRIP PLANNER",
           style: TextStyle(fontWeight: FontWeight.bold, color: planTextColor),
         ),
       ),
+      // to automatically return basecard widget from list of days
+      // inspired by aj's code
       body: Center(
         child: FutureBuilder<List<int>>(
             future: SQLDB.instance.getAllDayNum(),
@@ -125,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
             }),
       ),
+      // create new day
       floatingActionButton: Stack(
         children: [
           Align(
@@ -135,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: FloatingActionButton(
                 heroTag: "add",
                 backgroundColor: planHeadColor,
-                child: Icon(Icons.add, size: 40),
+                child: const Icon(Icons.add, size: 40),
                 onPressed: () async {
                   Day newDay = Day(
                       day: latestDay,
@@ -145,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       exitTime: 0,
                       completed: 0);
                   SQLDB.instance.insertDay(newDay);
-                  print(await SQLDB.instance.allDays());
                   setState(() {
                     refreshDays();
                   });

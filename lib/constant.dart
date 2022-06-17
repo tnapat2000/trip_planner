@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// color theme for each page
 const planBg = Color(0xfff1f8e9);
 const planTextColor = Color(0xffdcedc8);
 const planCardColor = Color(0xff9ccc64);
