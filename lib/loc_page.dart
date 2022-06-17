@@ -135,7 +135,7 @@ class LocPage extends StatelessWidget {
       floatingActionButton: Stack(
         children: [
           Align(
-            alignment: Alignment.centerRight,
+            alignment: Alignment.bottomRight,
             child: Container(
               height: 70,
               width: 70,
@@ -164,9 +164,9 @@ class LocPage extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.bottomLeft,
             child: Padding(
-              padding: const EdgeInsets.all(30.0),
+              padding: const EdgeInsets.only(left: 30.0),
               child: Container(
                 height: 70,
                 width: 70,
