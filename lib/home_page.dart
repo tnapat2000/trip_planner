@@ -75,12 +75,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: planBg,
       appBar: AppBar(
+        actions: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.redAccent,
+                child: IconButton(
+                  onPressed: () async {
+                    SQLDB.instance.emptyTable();
+                    setState(() {
+                      refreshDays();
+                      latestDay = 1;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.delete_forever,
+                    size: 25,
+                  ),
+                ),
+              )),
+        ],
         backgroundColor: planDark,
-        title: Center(
-          child: const Text(
-            "TRIP PLANNER",
-            style: TextStyle(fontWeight: FontWeight.bold, color: planTextColor),
-          ),
+        title: Text(
+          "TRIP PLANNER",
+          style: TextStyle(fontWeight: FontWeight.bold, color: planTextColor),
         ),
       ),
       body: Center(
@@ -108,32 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: Stack(
         children: [
-          // SizedBox(width: 50, height: 50,),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              child: Container(
-                width: 70,
-                height: 70,
-                child: FloatingActionButton(
-                  heroTag: "delete",
-                  backgroundColor: Colors.redAccent,
-                  child: Icon(
-                    Icons.delete_forever,
-                    size: 40,
-                  ),
-                  onPressed: () async {
-                    SQLDB.instance.emptyTable();
-                    setState(() {
-                      refreshDays();
-                      latestDay = 1;
-                    });
-                  },
-                ),
-              ),
-            ),
-          ),
           Align(
             alignment: Alignment.bottomRight,
             child: Container(

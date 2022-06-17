@@ -121,6 +121,24 @@ class LocPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: locBg,
       appBar: AppBar(
+        actions: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.redAccent,
+                child: IconButton(
+                  onPressed: () async {
+                    SQLDB.instance.deleteLoc(carryOver.locId);
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.delete_forever,
+                    size: 25,
+                  ),
+                ),
+              )),
+        ],
         title: Text(
           "Edit Information",
           style: TextStyle(fontWeight: FontWeight.bold, color: locTextColor),
@@ -163,24 +181,6 @@ class LocPage extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              child: Container(
-                height: 70,
-                width: 70,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.redAccent,
-                  child: Icon(Icons.delete_forever, size: 40),
-                  onPressed: () async {
-                    SQLDB.instance.deleteLoc(carryOver.locId);
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
